@@ -1,0 +1,26 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #efefef;
+    .form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 360px;
+        background-color: #fff;
+        height: 100%;
+        padding: 0 30px;
+        > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            .mainIcon {
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
