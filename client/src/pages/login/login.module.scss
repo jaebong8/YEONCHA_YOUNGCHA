@@ -18,8 +18,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            .mainIcon {
-                margin-bottom: 20px;
+            .errorMsg {
+                color: red;
+                margin-bottom: 10px;
+                align-self: flex-start;
             }
         }
     }

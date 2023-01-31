@@ -1,6 +1,7 @@
 import styles from "./LoginLink.module.scss";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { memo } from "react";
 
 const LoginLink = () => {
     const router = useRouter();
@@ -19,4 +20,4 @@ const LoginLink = () => {
     );
 };
 
-export default LoginLink;
+export default memo(LoginLink);

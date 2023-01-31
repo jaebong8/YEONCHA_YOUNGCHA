@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { memo } from "react";
 import styles from "./LoginButton.module.scss";
 
 const LoginButton = () => {
@@ -11,4 +12,4 @@ const LoginButton = () => {
     );
 };
 
-export default LoginButton;
+export default memo(LoginButton);
