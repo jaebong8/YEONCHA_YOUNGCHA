@@ -2,8 +2,11 @@ import "@/styles/globals.scss";
 import type { AppProps } from "next/app";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { useLayoutEffect } from "react";
+import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
+    const router = useRouter();
     const firebaseConfig = {
         apiKey: "AIzaSyDoZkDQsu71m13V6OB9Yob9MADnW-E_5Q0",
         authDomain: "yeoncha-youngcha.firebaseapp.com",
@@ -15,5 +18,6 @@ export default function App({ Component, pageProps }: AppProps) {
     };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+
     return <Component {...pageProps} />;
 }

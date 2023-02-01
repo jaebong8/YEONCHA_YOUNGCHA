@@ -1,6 +1,27 @@
 import Head from "next/head";
+import { useCallback, useEffect } from "react";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { useRouter } from "next/router";
+import BridgeRouter from "./BridgeRouter";
 
-export default function Home() {
+function Home() {
+    const auth = getAuth();
+    const router = useRouter();
+    const onClickHandler = useCallback(() => {
+        signOut(auth)
+            .then(() => {
+                // Sign-out successful.
+                router.push("/login");
+            })
+            .catch((error) => {
+                // An error happened.
+            });
+    }, [auth, router]);
+
+    if (auth.currentUser === null) {
+        return <BridgeRouter />;
+    }
+
     return (
         <>
             <Head>
@@ -14,7 +35,10 @@ export default function Home() {
             </Head>
             <div>
                 <h1>인덱스 페이지</h1>
+                <button onClick={onClickHandler}>로그아웃</button>
             </div>
         </>
     );
 }
+
+export default Home;

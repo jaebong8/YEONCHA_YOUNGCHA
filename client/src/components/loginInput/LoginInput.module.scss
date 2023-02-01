@@ -10,6 +10,7 @@
     border: 3px solid v.$subColor;
     &::placeholder {
         color: #999;
+        font-family: "Noto Sans KR", sans-serif;
     }
     &:focus {
         outline: none;
