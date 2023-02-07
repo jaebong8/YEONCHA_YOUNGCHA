@@ -6,6 +6,7 @@
     > nav {
         flex-basis: 200px;
         border-right: 3px solid v.$subColor;
+        height: auto;
         > div {
             display: flex;
             align-items: center;
@@ -55,11 +56,13 @@
         }
         .calendarContainer {
             .calendar {
+                padding: 10px;
                 .yearTitle {
                     text-align: center;
                     font-size: 20px;
                     font-weight: bold;
                     color: v.$subColor2;
+                    margin-top: 10px;
                 }
                 .monthTitle {
                     display: flex;
@@ -70,7 +73,7 @@
                         font-size: 30px;
                         line-height: 1;
                         margin: 0 20px;
-                        color: v.$mainColor;
+                        color: v.$subColor2;
                         font-weight: bold;
                     }
                     .prevButton,
@@ -94,7 +97,7 @@
                     display: grid;
                     grid-template-columns: repeat(7, 1fr);
                     gap: 5px;
-                    padding: 10px;
+
                     margin-top: 20px;
                     > div {
                         padding: 10px;
@@ -102,7 +105,29 @@
                         color: v.$subColor;
                         border: 2px solid v.$subColor2;
                         font-weight: bold;
-                        height: 45px;
+                        height: 40px;
+                        border-radius: 10px;
+                        line-height: 1;
+                    }
+                }
+                .dateContainer {
+                    display: grid;
+                    grid-template-columns: repeat(7, 1fr);
+                    gap: 5px;
+                    margin-top: 10px;
+                    > div {
+                        border: 1px solid v.$subColor;
+                        height: 100px;
+                        color: v.$subColor2;
+                        > span {
+                            margin: 5px;
+                        }
+                    }
+                    .currentMonth {
+                        font-weight: bold;
+                    }
+                    .diffMonth {
+                        color: #ddd;
                     }
                 }
             }

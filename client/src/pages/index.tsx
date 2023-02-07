@@ -1,10 +1,21 @@
 import Head from "next/head";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/router";
 import styles from "../styles/home.module.scss";
 import Image from "next/image";
-import { format, addMonths, subMonths } from "date-fns";
+import {
+    format,
+    addMonths,
+    subMonths,
+    startOfMonth,
+    endOfMonth,
+    startOfWeek,
+    endOfWeek,
+    addDays,
+    differenceInCalendarDays,
+    getMonth,
+} from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,6 +25,21 @@ const Home: React.FC = () => {
     const [today, setToday] = useState(new Date());
     const [loading, setLoading] = useState(true);
     const weekMock = ["일", "월", "화", "수", "목", "금", "토"];
+    const monthStart = startOfMonth(today);
+    const monthEnd = endOfMonth(today);
+    const startDate = startOfWeek(monthStart);
+    const endDate = endOfWeek(monthEnd);
+
+    const createMonth = useMemo(() => {
+        const monthArray = [];
+        let day = startDate;
+        while (differenceInCalendarDays(endDate, day) >= 0) {
+            monthArray.push(day);
+            day = addDays(day, 1);
+        }
+        return monthArray;
+    }, [today]);
+
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -24,6 +50,10 @@ const Home: React.FC = () => {
             }
         });
     }, []);
+    useEffect(() => {
+        console.log(createMonth);
+    }, [today]);
+
     const onLogout = useCallback(() => {
         signOut(auth);
     }, []);
@@ -79,8 +109,22 @@ const Home: React.FC = () => {
                                         </button>
                                     </div>
                                     <div className={styles.dayContainer}>
-                                        {weekMock.map((v) => {
-                                            return <div>{v}</div>;
+                                        {weekMock.map((v, i) => {
+                                            return <div key={`day${i}`}>{v}</div>;
+                                        })}
+                                    </div>
+                                    <div className={styles.dateContainer}>
+                                        {createMonth.map((v, i) => {
+                                            let validation;
+                                            validation = getMonth(today) === getMonth(v);
+                                            return (
+                                                <div
+                                                    key={`date${i}`}
+                                                    className={validation ? styles.currentMonth : styles.diffMonth}
+                                                >
+                                                    <span>{format(v, "d")}</span>
+                                                </div>
+                                            );
                                         })}
                                     </div>
                                 </div>
