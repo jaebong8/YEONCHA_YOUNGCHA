@@ -1,8 +1,9 @@
 import "@/styles/globals.scss";
 import type { AppProps } from "next/app";
 import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
+
 const firebaseConfig = {
     apiKey: "AIzaSyDoZkDQsu71m13V6OB9Yob9MADnW-E_5Q0",
     authDomain: "yeoncha-youngcha.firebaseapp.com",
@@ -14,6 +15,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 export default function App({ Component, pageProps }: AppProps) {
     return <Component {...pageProps} />;

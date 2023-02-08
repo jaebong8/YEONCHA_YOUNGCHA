@@ -3,10 +3,12 @@ import LoginImage from "@/components/loginImage/LoginImage";
 import LoginInput from "@/components/loginInput/LoginInput";
 import LoginLink from "@/components/loginLink/LoginLink";
 import styles from "@/pages/login/login.module.scss";
-import { useCallback, useState } from "react";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useCallback, useEffect, useState } from "react";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { collection, addDoc, getFirestore } from "firebase/firestore";
+import withAuth from "@/hoc/withAuth";
 
 const Register = () => {
     const [email, setEmail] = useState("");
@@ -16,32 +18,36 @@ const Register = () => {
     const [onSuccess, setOnSuccess] = useState(false);
     const [userName, setUserName] = useState<string | null>("");
     const auth = getAuth();
+    const db = getFirestore();
     const onSubmitHandler = useCallback(
-        (e: React.FormEvent<HTMLElement>) => {
+        async (e: React.FormEvent<HTMLElement>) => {
             e.preventDefault();
             if (password !== passwordCheck) {
                 setErrorMsg("패스워드가 일치하지 않습니다.");
                 return;
             }
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential?.user;
-                    setUserName(user.email);
-                    setEmail("");
-                    setPassword("");
-                    setPasswordCheck("");
-                    setErrorMsg("");
-                    setOnSuccess(true);
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    if (errorCode === "auth/invalid-email") {
-                        setErrorMsg("잘못된 이메일 형식입니다.");
-                    }
-                    if (errorCode === "auth/email-already-in-use") {
-                        setErrorMsg("이미 가입된 이메일입니다.");
-                    }
+            try {
+                const user = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = user.user.uid;
+                const docRef = await addDoc(collection(db, "users"), {
+                    userUid: uid,
                 });
+                setUserName(user.user.email);
+                setEmail("");
+                setPassword("");
+                setPasswordCheck("");
+                setErrorMsg("");
+                setOnSuccess(true);
+            } catch (error: any) {
+                console.dir(error);
+                const errorCode = error.code;
+                if (errorCode === "auth/invalid-email") {
+                    setErrorMsg("잘못된 이메일 형식입니다.");
+                }
+                if (errorCode === "auth/email-already-in-use") {
+                    setErrorMsg("이미 가입된 이메일입니다.");
+                }
+            }
         },
         [email, password, auth, passwordCheck]
     );
@@ -73,11 +79,7 @@ const Register = () => {
                                 setValue={setPasswordCheck}
                                 type="password"
                             />
-                            {errorMsg && (
-                                <span className={styles.errorMsg}>
-                                    {errorMsg}
-                                </span>
-                            )}
+                            {errorMsg && <span className={styles.errorMsg}>{errorMsg}</span>}
                             <LoginButton />
                             <LoginLink />
                         </>
@@ -88,7 +90,7 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default withAuth(Register);
 
 interface Props {
     userName: string | null;
@@ -102,12 +104,7 @@ const OnSuccess: React.FC<Props> = ({ userName }) => {
 
     return (
         <div className={styles.onSuccess}>
-            <Image
-                src={"/images/check.png"}
-                alt="checkRegister"
-                width={100}
-                height={100}
-            />
+            <Image src={"/images/check.png"} alt="checkRegister" width={100} height={100} />
             <p className={styles.userName}>{userName}님,</p>
             <p>회원가입을 환영합니다.</p>
             <button onClick={onClickHandler}>로그인하기</button>
