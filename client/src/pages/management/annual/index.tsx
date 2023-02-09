@@ -1,7 +1,11 @@
-import React from "react";
+import Layout from "@/components/layout/Layout";
 
 const AnnualPage = () => {
-    return <div>AnnualPage</div>;
+    return (
+        <Layout>
+            <div>AnnualPage</div>
+        </Layout>
+    );
 };
 
 export default AnnualPage;

@@ -1,7 +1,11 @@
-import React from "react";
+import Layout from "@/components/layout/Layout";
 
 const EmployeePage = () => {
-    return <div>EmployeePage</div>;
+    return (
+        <Layout>
+            <div>EmployeePage</div>
+        </Layout>
+    );
 };
 
 export default EmployeePage;

@@ -8,8 +8,8 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebas
 import { useRouter } from "next/router";
 import Spinner from "@/components/spinner/Spinner";
 
-const auth = getAuth();
-const SignIn: React.FC = (props) => {
+const SignIn: React.FC = () => {
+    const auth = getAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -20,6 +20,7 @@ const SignIn: React.FC = (props) => {
             e.preventDefault();
             try {
                 const user = await signInWithEmailAndPassword(auth, email, password);
+                console.log(user.user.uid);
                 sessionStorage.setItem("signIn", user.user.uid);
                 setEmail("");
                 setPassword("");

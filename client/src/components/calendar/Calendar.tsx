@@ -40,7 +40,7 @@ const Calendar = () => {
         return monthArray;
     }, [currentDate]);
     return (
-        <div className={styles.calendar}>
+        <section className={styles.calendar}>
             <div className={styles.yearTitle}>{format(currentDate, "yyyy년")}</div>
             <div className={styles.monthTitle}>
                 <button className={styles.prevButton} onClick={prevMonthHandler}>
@@ -96,7 +96,7 @@ const Calendar = () => {
                     );
                 })}
             </div>
-        </div>
+        </section>
     );
 };
 
