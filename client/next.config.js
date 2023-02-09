@@ -8,6 +8,11 @@ const nextConfig = {
                 destination: "/auth/signin",
                 permanent: true,
             },
+            {
+                source: "/",
+                destination: "/auth/signin",
+                permanent: true,
+            },
         ];
     },
 };
