@@ -2,13 +2,13 @@ import LoginButton from "@/components/loginButton/LoginButton";
 import LoginImage from "@/components/loginImage/LoginImage";
 import LoginInput from "@/components/loginInput/LoginInput";
 import LoginLink from "@/components/loginLink/LoginLink";
-import styles from "@/pages/login/login.module.scss";
+import styles from "@/pages/auth/signin/signIn.module.scss";
 import { useCallback, useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
-import withAuth from "@/hoc/withAuth";
+
 const auth = getAuth();
-const Login: React.FC = () => {
+const SignIn: React.FC = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
@@ -20,10 +20,9 @@ const Login: React.FC = () => {
             try {
                 const user = await signInWithEmailAndPassword(auth, email, password);
                 sessionStorage.setItem("signIn", user.user.uid);
-                console.log("login", user);
                 setEmail("");
                 setPassword("");
-                router.push("/");
+                router.push("/home");
             } catch (error: any) {
                 const errorCode = error.code;
                 console.log(errorCode);
@@ -39,7 +38,12 @@ const Login: React.FC = () => {
     );
 
     useEffect(() => {
-        console.log("login");
+        onAuthStateChanged(auth, async (user) => {
+            const isLogIn = user?.uid === sessionStorage.getItem("signIn");
+            if (isLogIn) {
+                router.back();
+            }
+        });
     }, []);
 
     return (
@@ -69,4 +73,4 @@ const Login: React.FC = () => {
         </>
     );
 };
-export default withAuth(Login);
+export default SignIn;

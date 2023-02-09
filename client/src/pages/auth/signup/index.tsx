@@ -2,15 +2,14 @@ import LoginButton from "@/components/loginButton/LoginButton";
 import LoginImage from "@/components/loginImage/LoginImage";
 import LoginInput from "@/components/loginInput/LoginInput";
 import LoginLink from "@/components/loginLink/LoginLink";
-import styles from "@/pages/login/login.module.scss";
+import styles from "@/pages/auth/signin/signIn.module.scss";
 import { useCallback, useEffect, useState } from "react";
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { collection, addDoc, getFirestore } from "firebase/firestore";
-import withAuth from "@/hoc/withAuth";
 
-const Register = () => {
+const SignUp = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordCheck, setPasswordCheck] = useState("");
@@ -54,11 +53,11 @@ const Register = () => {
 
     return (
         <div className={styles.container}>
-            <form className={styles.form} onSubmit={onSubmitHandler}>
-                <div>
-                    {onSuccess ? (
-                        <OnSuccess userName={userName} />
-                    ) : (
+            {onSuccess ? (
+                <OnSuccess userName={userName} />
+            ) : (
+                <form className={styles.form} onSubmit={onSubmitHandler}>
+                    <div>
                         <>
                             <LoginImage />
                             <LoginInput
@@ -83,14 +82,14 @@ const Register = () => {
                             <LoginButton />
                             <LoginLink />
                         </>
-                    )}
-                </div>
-            </form>
+                    </div>
+                </form>
+            )}
         </div>
     );
 };
 
-export default withAuth(Register);
+export default SignUp;
 
 interface Props {
     userName: string | null;
@@ -98,16 +97,22 @@ interface Props {
 
 const OnSuccess: React.FC<Props> = ({ userName }) => {
     const router = useRouter();
-    const onClickHandler = useCallback(() => {
-        router.push("/login");
-    }, [router]);
+    const onClickHandler = useCallback(
+        (e: React.FormEvent<HTMLElement>) => {
+            e.preventDefault();
+            router.push("/auth/signin");
+        },
+        [router]
+    );
 
     return (
-        <div className={styles.onSuccess}>
-            <Image src={"/images/check.png"} alt="checkRegister" width={100} height={100} />
-            <p className={styles.userName}>{userName}님,</p>
-            <p>회원가입을 환영합니다.</p>
-            <button onClick={onClickHandler}>로그인하기</button>
+        <div className={styles.successContainer}>
+            <div className={styles.onSuccess}>
+                <Image src={"/images/check.png"} alt="checkRegister" width={100} height={100} />
+                <p className={styles.userName}>{userName}님,</p>
+                <p>회원가입을 환영합니다.</p>
+                <button onClick={onClickHandler}>로그인하기</button>
+            </div>
         </div>
     );
 };

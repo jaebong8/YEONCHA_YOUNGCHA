@@ -8,13 +8,9 @@ const LoginLink = () => {
     const routeName = router.route;
     return (
         <div className={styles.loginLink}>
-            <span>
-                {routeName === "/login"
-                    ? "아이디가 없으신가요?"
-                    : "아이디가 이미 있으신가요?"}
-            </span>
-            <Link href={routeName === "/login" ? "/register" : "/login"}>
-                {routeName === "/login" ? "회원가입" : "로그인"}
+            <span>{routeName === "/auth/signin" ? "아이디가 없으신가요?" : "아이디가 이미 있으신가요?"}</span>
+            <Link href={routeName === "/auth/signin" ? "/auth/signup" : "/auth/signin"}>
+                {routeName === "/auth/signin" ? "회원가입" : "로그인"}
             </Link>
         </div>
     );
