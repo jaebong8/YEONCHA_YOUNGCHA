@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { useCallback, useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/router";
@@ -7,41 +6,66 @@ import Image from "next/image";
 
 import Calendar from "@/components/calendar/Calendar";
 import { format } from "date-fns";
+import { el } from "date-fns/locale";
+import Spinner from "@/components/spinner/Spinner";
 
 const HomePage: React.FC = () => {
     const auth = getAuth();
     const router = useRouter();
+    const [loading, setLoading] = useState(true);
     const onLogout = useCallback(() => {
         signOut(auth);
         sessionStorage.removeItem("signIn");
     }, []);
+
+    const listClick = useCallback((url: string) => {
+        router.push(url);
+    }, []);
+
     useEffect(() => {
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             const isLogIn = user?.uid === sessionStorage.getItem("signIn");
+
             if (!isLogIn) {
-                router.back();
+                setLoading(true);
+                router.push("/auth/signin");
+            } else if (isLogIn) {
+                setLoading(false);
             }
         });
     }, []);
     return (
         <>
-            <Head>
-                <title>연차영차</title>
-                <meta name="description" content="YEONCHA YOUNGCHA" />
-                <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
-            <>
+            {loading ? (
+                <Spinner />
+            ) : (
                 <div className={styles.container}>
                     <nav>
                         <div>
-                            <Image src={"/images/longIcon.png"} width={150} height={80} alt="longIcon" />
+                            <Image src={"/images/longIcon.png"} width={150} height={80} alt="longIcon" priority />
                         </div>
                         <ul>
-                            <li>직원 관리</li>
-                            <li>연차 관리</li>
-                            <li>문서 관리</li>
+                            <li
+                                onClick={() => {
+                                    listClick("/management/employee");
+                                }}
+                            >
+                                직원 관리
+                            </li>
+                            <li
+                                onClick={() => {
+                                    listClick("/management/annual");
+                                }}
+                            >
+                                연차 관리
+                            </li>
+                            <li
+                                onClick={() => {
+                                    listClick("/management/document");
+                                }}
+                            >
+                                문서 관리
+                            </li>
                         </ul>
                     </nav>
                     <main>
@@ -59,7 +83,7 @@ const HomePage: React.FC = () => {
                         </section>
                     </main>
                 </div>
-            </>
+            )}
         </>
     );
 };

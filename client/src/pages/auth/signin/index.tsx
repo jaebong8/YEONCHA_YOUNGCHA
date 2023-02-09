@@ -6,6 +6,7 @@ import styles from "@/pages/auth/signin/signIn.module.scss";
 import { useCallback, useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
+import Spinner from "@/components/spinner/Spinner";
 
 const auth = getAuth();
 const SignIn: React.FC = (props) => {
@@ -13,7 +14,7 @@ const SignIn: React.FC = (props) => {
     const [password, setPassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const router = useRouter();
-
+    const [loading, setLoading] = useState(true);
     const onSubmitHandler = useCallback(
         async (e: React.FormEvent<HTMLElement>) => {
             e.preventDefault();
@@ -38,38 +39,46 @@ const SignIn: React.FC = (props) => {
     );
 
     useEffect(() => {
-        onAuthStateChanged(auth, async (user) => {
+        onAuthStateChanged(auth, (user) => {
             const isLogIn = user?.uid === sessionStorage.getItem("signIn");
+
             if (isLogIn) {
-                router.back();
+                router.push("/home");
+                setLoading(true);
+            } else if (!isLogIn) {
+                setLoading(false);
             }
         });
     }, []);
 
     return (
         <>
-            <div className={styles.container}>
-                <form className={styles.form} onSubmit={onSubmitHandler}>
-                    <div>
-                        <LoginImage />
-                        <LoginInput
-                            placeholder="아이디를 입력해주세요."
-                            value={email}
-                            setValue={setEmail}
-                            type="email"
-                        />
-                        <LoginInput
-                            placeholder="비밀번호를 입력해주세요."
-                            value={password}
-                            setValue={setPassword}
-                            type="password"
-                        />
-                        {errorMsg && <span className={styles.errorMsg}>{errorMsg}</span>}
-                        <LoginButton />
-                        <LoginLink />
-                    </div>
-                </form>
-            </div>
+            {loading ? (
+                <Spinner />
+            ) : (
+                <div className={styles.container}>
+                    <form className={styles.form} onSubmit={onSubmitHandler}>
+                        <div>
+                            <LoginImage />
+                            <LoginInput
+                                placeholder="아이디를 입력해주세요."
+                                value={email}
+                                setValue={setEmail}
+                                type="email"
+                            />
+                            <LoginInput
+                                placeholder="비밀번호를 입력해주세요."
+                                value={password}
+                                setValue={setPassword}
+                                type="password"
+                            />
+                            {errorMsg && <span className={styles.errorMsg}>{errorMsg}</span>}
+                            <LoginButton />
+                            <LoginLink />
+                        </div>
+                    </form>
+                </div>
+            )}
         </>
     );
 };

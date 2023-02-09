@@ -30,12 +30,14 @@ const SignUp = () => {
                 const uid = user.user.uid;
                 const docRef = await addDoc(collection(db, "users"), {
                     userUid: uid,
+                    role: "admin",
                 });
                 setUserName(user.user.email);
                 setEmail("");
                 setPassword("");
                 setPasswordCheck("");
                 setErrorMsg("");
+                sessionStorage.removeItem("signIn");
                 setOnSuccess(true);
             } catch (error: any) {
                 console.dir(error);

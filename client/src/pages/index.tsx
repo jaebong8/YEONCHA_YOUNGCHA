@@ -5,9 +5,7 @@ const Home: React.FC = () => {
         <>
             <Head>
                 <title>연차영차</title>
-                <meta name="description" content="YEONCHA YOUNGCHA" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/favicon.ico" />
             </Head>
         </>
     );

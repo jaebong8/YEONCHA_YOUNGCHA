@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import Spinner from "@/components/spinner/Spinner";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDoZkDQsu71m13V6OB9Yob9MADnW-E_5Q0",
