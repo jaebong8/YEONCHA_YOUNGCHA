@@ -1,0 +1,51 @@
+@use "@/styles/variables.scss" as v;
+.container {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    > button {
+        all: unset;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        cursor: pointer;
+        > svg {
+            width: 25px;
+            height: 25px;
+            color: v.$subColor2;
+            margin-right: 5px;
+        }
+        span {
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+    > table {
+        width: 100%;
+        text-align: center;
+        position: relative;
+        border-collapse: separate;
+        > caption {
+            padding: 10px;
+            background-color: v.$lightGray;
+            font-weight: bold;
+            border: 2px solid #fff;
+        }
+        > thead {
+            > tr {
+                > th {
+                    background-color: v.$subColor2;
+                    color: #fff;
+                }
+            }
+        }
+        > tbody {
+            > tr {
+                > td {
+                    background-color: #efefef;
+                }
+            }
+        }
+    }
+}

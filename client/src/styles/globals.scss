@@ -5,7 +5,9 @@
 }
 html,
 body {
-    height: 100vh;
+    height: auth;
+    min-height: 100vh;
+
     font-family: "Noto Sans KR", "Noto Sans";
 }
 
@@ -15,5 +17,9 @@ a {
 }
 
 #__next {
-    height: 100%;
+    height: auto;
+    min-height: 100vh;
+}
+li {
+    list-style: none;
 }
