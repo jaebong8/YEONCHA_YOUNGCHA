@@ -2,7 +2,7 @@ import Layout from "@/components/layout/Layout";
 import styles from "./EmployeePage.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import {
     Modal,
@@ -17,11 +17,32 @@ import {
     Input,
     Button,
 } from "@chakra-ui/react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { ko } from "date-fns/esm/locale";
+import { GetServerSideProps } from "next";
+import { collection, getDocs, getFirestore, query } from "firebase/firestore";
 
+const db = getFirestore();
 const EmployeePage = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const initialRef = useRef(null);
     const finalRef = useRef(null);
+    const [birthDate, setBirthDate] = useState<Date | null>();
+    const [workStartDate, setWorkStartDate] = useState<Date | null>();
+    const [name, setName] = useState<String>("");
+    const [phoneNumber, setPhoneNumber] = useState<String>("");
+    // useEffect(() => {
+    //     const loadQuery = async () => {
+    //         const querySnapshot = await getDocs(collection(db, "users"));
+    //         querySnapshot.forEach((doc) => {
+    //             // 가져온 모든 문서들을 확인
+    //             console.log(doc.id, " => ", doc.data());
+    //         });
+    //     };
+    //     loadQuery();
+    // }, []);
+
     return (
         <Layout>
             <section className={styles.container}>
@@ -57,33 +78,60 @@ const EmployeePage = () => {
                     <ModalCloseButton />
                     <ModalBody pb={6}>
                         <FormControl>
-                            <FormLabel>이름</FormLabel>
-                            <Input ref={initialRef} placeholder="이름" />
+                            <FormLabel fontWeight="bold" className="test">
+                                이름
+                            </FormLabel>
+                            <Input
+                                ref={initialRef}
+                                placeholder="이름"
+                                value={name}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setName(e.target.value);
+                                }}
+                                required
+                            />
                         </FormControl>
 
                         <FormControl mt={4}>
-                            <FormLabel>생년월일</FormLabel>
-                            <Input placeholder="생년월일" />
+                            <FormLabel fontWeight="bold">생년월일</FormLabel>
+                            <DatePicker
+                                selected={birthDate}
+                                onChange={(date) => setBirthDate(date)}
+                                className={styles.modalInput}
+                                dateFormat="yyyy/MM/dd"
+                                locale={ko}
+                                required
+                            />
                         </FormControl>
                         <FormControl mt={4}>
-                            <FormLabel>연락처</FormLabel>
-                            <Input placeholder="연락처" />
+                            <FormLabel fontWeight="bold">연락처</FormLabel>
+                            <Input
+                                placeholder="연락처"
+                                value={phoneNumber}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                    setPhoneNumber(e.target.value);
+                                }}
+                                required
+                            />
                         </FormControl>
                         <FormControl mt={4}>
-                            <FormLabel>입사일</FormLabel>
-                            <Input placeholder="입사일" />
-                        </FormControl>
-                        <FormControl mt={4}>
-                            <FormLabel>년차</FormLabel>
-                            <Input placeholder="년차" />
+                            <FormLabel fontWeight="bold">입사일</FormLabel>
+                            <DatePicker
+                                selected={workStartDate}
+                                onChange={(date) => setWorkStartDate(date)}
+                                className={styles.modalInput}
+                                dateFormat="yyyy/MM/dd"
+                                locale={ko}
+                                required
+                            />
                         </FormControl>
                     </ModalBody>
 
                     <ModalFooter>
                         <Button colorScheme="blue" mr={3}>
-                            Save
+                            저장
                         </Button>
-                        <Button onClick={onClose}>Cancel</Button>
+                        <Button onClick={onClose}>취소</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>
