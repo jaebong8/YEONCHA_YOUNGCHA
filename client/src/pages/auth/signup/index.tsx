@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { collection, addDoc, getFirestore, setDoc, doc } from "firebase/firestore";
 import { useToast } from "@chakra-ui/react";
+import ErrorMsg from "@/components/errorMsg/ErrorMsg";
 
 const SignUp = () => {
     const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ const SignUp = () => {
                 setErrorMsg("");
                 sessionStorage.removeItem("signIn");
                 toast({
-                    title: "회원가입이 완료되었습니다.",
+                    title:`${email}님 회원가입을 환영합니다.`,
                     description: "이메일과 비밀번호로 로그인해주세요.",
                     status: "success",
                     duration: 5000,
@@ -85,7 +86,7 @@ const SignUp = () => {
                             setValue={setPasswordCheck}
                             type="password"
                         />
-                        {errorMsg && <span className={styles.errorMsg}>{errorMsg}</span>}
+                        {errorMsg && <ErrorMsg>{errorMsg}</ErrorMsg>}
                         <LoginButton />
                         <LoginLink />
                     </>

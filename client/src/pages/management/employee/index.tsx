@@ -2,7 +2,7 @@ import Layout from "@/components/layout/Layout";
 import styles from "./EmployeePage.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect , useCallback} from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import {
     Modal,
@@ -18,10 +18,11 @@ import {
     Button,
 } from "@chakra-ui/react";
 import DatePicker from "react-datepicker";
+import ko from "date-fns/locale/ko";
 import "react-datepicker/dist/react-datepicker.css";
-import { ko } from "date-fns/esm/locale";
 import { GetServerSideProps } from "next";
 import { collection, getDocs, getFirestore, query } from "firebase/firestore";
+import ErrorMsg from "@/components/errorMsg/ErrorMsg";
 
 const db = getFirestore();
 const EmployeePage = () => {
@@ -32,6 +33,11 @@ const EmployeePage = () => {
     const [workStartDate, setWorkStartDate] = useState<Date | null>();
     const [name, setName] = useState<String>("");
     const [phoneNumber, setPhoneNumber] = useState<String>("");
+  
+    const [errMsg, setErrMsg] = useState({
+        name:"",
+    })
+    
     // useEffect(() => {
     //     const loadQuery = async () => {
     //         const querySnapshot = await getDocs(collection(db, "users"));
@@ -42,6 +48,36 @@ const EmployeePage = () => {
     //     };
     //     loadQuery();
     // }, []);
+
+    const onClickHandler = useCallback(
+      () => {
+        const signInUid = sessionStorage.getItem("signIn")
+        // const docRef = await setDoc(doc(db, "users", uid), {
+        //     userUid: uid,
+        //     role: "admin",
+        //     email: email,
+        // });
+        console.log(signInUid)
+ 
+        // if(errMsg === "") onClose();
+        if(name === ""){
+            setErrMsg((prevState)=>{
+                const newErrMsg = {...prevState}
+                newErrMsg.name = "이름을 입력하세요"
+                return newErrMsg
+            })
+        }
+        console.log(errMsg)
+      },
+      [],
+    )
+
+    useEffect(() => {
+      console.log(errMsg)
+    }, [errMsg])
+    
+    
+    
 
     return (
         <Layout>
@@ -90,6 +126,7 @@ const EmployeePage = () => {
                                 }}
                                 required
                             />
+                            <ErrorMsg>{errMsg.name}</ErrorMsg>
                         </FormControl>
 
                         <FormControl mt={4}>
@@ -100,7 +137,7 @@ const EmployeePage = () => {
                                 className={styles.modalInput}
                                 dateFormat="yyyy/MM/dd"
                                 locale={ko}
-                                required
+                                
                             />
                         </FormControl>
                         <FormControl mt={4}>
@@ -128,7 +165,7 @@ const EmployeePage = () => {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3}>
+                        <Button colorScheme="blue" mr={3} onClick={onClickHandler}>
                             저장
                         </Button>
                         <Button onClick={onClose}>취소</Button>

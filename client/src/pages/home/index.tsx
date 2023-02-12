@@ -19,7 +19,7 @@ const HomePage: React.FC = () => {
 
             if (!isLogIn) {
                 setLoading(true);
-                router.push("/auth/signin");
+                router.push("/auth/signin",undefined, {shallow: true});
             } else if (isLogIn) {
                 setLoading(false);
             }

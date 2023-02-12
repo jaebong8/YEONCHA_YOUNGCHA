@@ -23,6 +23,7 @@ const Layout = (props: { children: React.ReactNode }) => {
     const onLogout = useCallback(() => {
         signOut(auth);
         sessionStorage.removeItem("signIn");
+        router.push("/auth/signin")
     }, []);
     const pathName = router.pathname;
     const lastPath = pathName.split("/")[pathName.split("/").length - 1];

@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/router";
 import Spinner from "@/components/spinner/Spinner";
+import ErrorMsg from "@/components/errorMsg/ErrorMsg";
 
 const SignIn: React.FC = () => {
     const auth = getAuth();
@@ -73,7 +74,7 @@ const SignIn: React.FC = () => {
                                 setValue={setPassword}
                                 type="password"
                             />
-                            {errorMsg && <span className={styles.errorMsg}>{errorMsg}</span>}
+                            {errorMsg && <ErrorMsg>{errorMsg}</ErrorMsg>}
                             <LoginButton />
                             <LoginLink />
                         </div>
