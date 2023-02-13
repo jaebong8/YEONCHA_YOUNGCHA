@@ -34,6 +34,7 @@ const SignUp = () => {
                     userUid: uid,
                     role: "admin",
                     email: email,
+                    workers: {},
                 });
                 setUserName(user.user.email);
                 setEmail("");
@@ -42,7 +43,7 @@ const SignUp = () => {
                 setErrorMsg("");
                 sessionStorage.removeItem("signIn");
                 toast({
-                    title:`${email}님 회원가입을 환영합니다.`,
+                    title: `${email}님 회원가입을 환영합니다.`,
                     description: "이메일과 비밀번호로 로그인해주세요.",
                     status: "success",
                     duration: 5000,

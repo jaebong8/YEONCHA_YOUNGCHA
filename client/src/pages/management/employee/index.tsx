@@ -2,7 +2,7 @@ import Layout from "@/components/layout/Layout";
 import styles from "./EmployeePage.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef, useEffect , useCallback} from "react";
+import { useState, useRef, useEffect, useCallback, SetStateAction } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import {
     Modal,
@@ -21,7 +21,7 @@ import DatePicker from "react-datepicker";
 import ko from "date-fns/locale/ko";
 import "react-datepicker/dist/react-datepicker.css";
 import { GetServerSideProps } from "next";
-import { collection, getDocs, getFirestore, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc } from "firebase/firestore";
 import ErrorMsg from "@/components/errorMsg/ErrorMsg";
 
 const db = getFirestore();
@@ -33,11 +33,12 @@ const EmployeePage = () => {
     const [workStartDate, setWorkStartDate] = useState<Date | null>();
     const [name, setName] = useState<String>("");
     const [phoneNumber, setPhoneNumber] = useState<String>("");
-  
-    const [errMsg, setErrMsg] = useState({
-        name:"",
-    })
-    
+
+    const [nameErrMsg, setNameErrMsg] = useState<String | boolean>("");
+    const [birthErrMsg, setBirthErrMsg] = useState<String | boolean>("");
+    const [phoneErrMsg, setPhoneErrMsg] = useState<String | boolean>("");
+    const [workStartErrMsg, setWorkStartErrMsg] = useState<String | boolean>("");
+
     // useEffect(() => {
     //     const loadQuery = async () => {
     //         const querySnapshot = await getDocs(collection(db, "users"));
@@ -49,35 +50,56 @@ const EmployeePage = () => {
     //     loadQuery();
     // }, []);
 
-    const onClickHandler = useCallback(
-      () => {
-        const signInUid = sessionStorage.getItem("signIn")
-        // const docRef = await setDoc(doc(db, "users", uid), {
-        //     userUid: uid,
-        //     role: "admin",
-        //     email: email,
-        // });
-        console.log(signInUid)
- 
-        // if(errMsg === "") onClose();
-        if(name === ""){
-            setErrMsg((prevState)=>{
-                const newErrMsg = {...prevState}
-                newErrMsg.name = "이름을 입력하세요"
-                return newErrMsg
-            })
+    const checkEmpty = useCallback((value: any, setValue: any, Msg: string) => {
+        if (String(value).trim().length === 0 || value === undefined || value === null) {
+            setValue(Msg);
+        } else {
+            setValue(false);
         }
-        console.log(errMsg)
-      },
-      [],
-    )
+    }, []);
+
+    const onClickHandler = useCallback(async () => {
+        const signInUid = sessionStorage.getItem("signIn");
+
+        if (nameErrMsg === false && birthErrMsg === false && phoneErrMsg === false && workStartErrMsg === false) {
+            try {
+                const userDocRef = doc(db, "users", signInUid);
+                await updateDoc(userDocRef, {
+                    workers: {
+                        [name]: {
+                            name,
+                            birthDate,
+                            workStartDate,
+                            phoneNumber,
+                            id: 1,
+                        },
+                    },
+                });
+                console.log("등록 완료");
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [nameErrMsg, birthErrMsg, phoneErrMsg, workStartErrMsg]);
+    useEffect(() => {
+        checkEmpty(name, setNameErrMsg, "이름을 입력해주세요.");
+        checkEmpty(birthDate, setBirthErrMsg, "생년월일을 입력해주세요.");
+        checkEmpty(workStartDate, setWorkStartErrMsg, "입사일을 입력해주세요.");
+        if (/\D/g.test(String(phoneNumber))) {
+            setPhoneErrMsg("숫자만 입력해주세요");
+        } else {
+            checkEmpty(phoneNumber, setPhoneErrMsg, "핸드폰번호를 입력해주세요.");
+        }
+    }, [name, birthDate, workStartDate, phoneNumber]);
 
     useEffect(() => {
-      console.log(errMsg)
-    }, [errMsg])
-    
-    
-    
+        if (!isOpen) {
+            setBirthDate(null);
+            setWorkStartDate(null);
+            setName("");
+            setPhoneNumber("");
+        }
+    }, [isOpen]);
 
     return (
         <Layout>
@@ -126,7 +148,7 @@ const EmployeePage = () => {
                                 }}
                                 required
                             />
-                            <ErrorMsg>{errMsg.name}</ErrorMsg>
+                            <ErrorMsg>{nameErrMsg}</ErrorMsg>
                         </FormControl>
 
                         <FormControl mt={4}>
@@ -137,19 +159,25 @@ const EmployeePage = () => {
                                 className={styles.modalInput}
                                 dateFormat="yyyy/MM/dd"
                                 locale={ko}
-                                
+                                placeholderText={"예시) 1234/12/23"}
+                                peekNextMonth
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
                             />
+                            <ErrorMsg>{birthErrMsg}</ErrorMsg>
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel fontWeight="bold">연락처</FormLabel>
                             <Input
-                                placeholder="연락처"
+                                placeholder="예시) 01012345678"
                                 value={phoneNumber}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                     setPhoneNumber(e.target.value);
                                 }}
                                 required
                             />
+                            <ErrorMsg>{phoneErrMsg}</ErrorMsg>
                         </FormControl>
                         <FormControl mt={4}>
                             <FormLabel fontWeight="bold">입사일</FormLabel>
@@ -160,7 +188,13 @@ const EmployeePage = () => {
                                 dateFormat="yyyy/MM/dd"
                                 locale={ko}
                                 required
+                                placeholderText={"예시) 1234/12/23"}
+                                peekNextMonth
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
                             />
+                            <ErrorMsg>{workStartErrMsg}</ErrorMsg>
                         </FormControl>
                     </ModalBody>
 

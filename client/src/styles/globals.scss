@@ -23,3 +23,7 @@ a {
 li {
     list-style: none;
 }
+
+.chakra-modal__content-container {
+    overflow: hidden !important;
+}

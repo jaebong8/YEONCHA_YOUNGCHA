@@ -1,9 +1,10 @@
 import "@/styles/globals.scss";
 import type { AppProps } from "next/app";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { ChakraProvider } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDoZkDQsu71m13V6OB9Yob9MADnW-E_5Q0",
@@ -19,6 +20,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 export default function App({ Component, pageProps }: AppProps) {
+    useEffect(() => {
+        const loadingUser = async () => {
+            const docRef = doc(db, "users", sessionStorage.getItem("signIn"));
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                console.log("Document data:", docSnap.data());
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        };
+        loadingUser();
+    }, []);
     return (
         <ChakraProvider>
             <Component {...pageProps} />
