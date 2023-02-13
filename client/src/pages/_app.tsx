@@ -4,7 +4,7 @@ import { initializeApp } from "firebase/app";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { ChakraProvider } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { createContext, useEffect, useState } from "react";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDoZkDQsu71m13V6OB9Yob9MADnW-E_5Q0",
@@ -19,13 +19,25 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+interface userInfo {
+    email: string;
+    userUid: string;
+    role: string;
+    workers: Object;
+}
+
+export const GlobalContext = createContext<userInfo>({});
+
 export default function App({ Component, pageProps }: AppProps) {
+    const [user, setUser] = useState({});
     useEffect(() => {
         const loadingUser = async () => {
-            const docRef = doc(db, "users", sessionStorage.getItem("signIn"));
+            const userUid = sessionStorage.getItem("signIn");
+            const docRef = doc(db, "users", userUid);
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
+                setUser(docSnap.data());
                 console.log("Document data:", docSnap.data());
             } else {
                 // doc.data() will be undefined in this case
@@ -35,8 +47,10 @@ export default function App({ Component, pageProps }: AppProps) {
         loadingUser();
     }, []);
     return (
-        <ChakraProvider>
-            <Component {...pageProps} />
-        </ChakraProvider>
+        <GlobalContext.Provider value={user}>
+            <ChakraProvider>
+                <Component {...pageProps} />
+            </ChakraProvider>
+        </GlobalContext.Provider>
     );
 }

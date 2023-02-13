@@ -2,7 +2,7 @@ import Layout from "@/components/layout/Layout";
 import styles from "./EmployeePage.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
-import { useState, useRef, useEffect, useCallback, SetStateAction } from "react";
+import { useState, useRef, useEffect, useCallback, SetStateAction, useContext } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 import {
     Modal,
@@ -23,9 +23,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { GetServerSideProps } from "next";
 import { collection, doc, getDoc, getDocs, getFirestore, query, setDoc, updateDoc } from "firebase/firestore";
 import ErrorMsg from "@/components/errorMsg/ErrorMsg";
+import { GlobalContext } from "@/pages/_app";
 
 const db = getFirestore();
 const EmployeePage = () => {
+    const userInfo = useContext(GlobalContext);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const initialRef = useRef(null);
     const finalRef = useRef(null);
@@ -60,6 +62,7 @@ const EmployeePage = () => {
 
     const onClickHandler = useCallback(async () => {
         const signInUid = sessionStorage.getItem("signIn");
+        const id = Object.keys(userInfo).length + 1;
 
         if (nameErrMsg === false && birthErrMsg === false && phoneErrMsg === false && workStartErrMsg === false) {
             try {
@@ -71,7 +74,7 @@ const EmployeePage = () => {
                             birthDate,
                             workStartDate,
                             phoneNumber,
-                            id: 1,
+                            id,
                         },
                     },
                 });
@@ -100,6 +103,12 @@ const EmployeePage = () => {
             setPhoneNumber("");
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        if (Object.keys(userInfo).length !== 0) {
+            console.log(userInfo.workers, "userInfo");
+        }
+    }, [userInfo]);
 
     return (
         <Layout>
