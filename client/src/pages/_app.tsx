@@ -23,7 +23,6 @@ interface userInfo {
     email: string;
     userUid: string;
     role: string;
-    workers: Object;
 }
 
 export const GlobalContext = createContext<userInfo>({});
@@ -32,16 +31,32 @@ export default function App({ Component, pageProps }: AppProps) {
     const [user, setUser] = useState({});
     useEffect(() => {
         const loadingUser = async () => {
-            const userUid = sessionStorage.getItem("signIn");
-            const docRef = doc(db, "users", userUid);
-            const docSnap = await getDoc(docRef);
+            const userUid = sessionStorage?.getItem("signIn");
+            if (userUid !== null) {
+                const userRef = doc(db, "users", userUid);
+                const workersRef = doc(db, "workers", userUid);
+                const userSnap = await getDoc(userRef);
+                const workersSnap = await getDoc(workersRef);
 
-            if (docSnap.exists()) {
-                setUser(docSnap.data());
-                console.log("Document data:", docSnap.data());
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
+                if (userSnap.exists()) {
+                    setUser(userSnap.data());
+                    console.log("Document data:", userSnap.data());
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+
+                if (workersSnap.exists()) {
+                    setUser((prev) => {
+                        const newState = { ...prev };
+                        newState["workers"] = workersSnap.data();
+                        return newState;
+                    });
+                    console.log("Document data:", workersSnap.data());
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
             }
         };
         loadingUser();

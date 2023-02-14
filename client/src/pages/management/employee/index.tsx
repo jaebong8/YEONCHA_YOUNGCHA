@@ -61,21 +61,18 @@ const EmployeePage = () => {
     }, []);
 
     const onClickHandler = useCallback(async () => {
-        const signInUid = sessionStorage.getItem("signIn");
-        const id = Object.keys(userInfo).length + 1;
-
         if (nameErrMsg === false && birthErrMsg === false && phoneErrMsg === false && workStartErrMsg === false) {
+            const signInUid = sessionStorage.getItem("signIn");
+            const id = Object.keys(userInfo).length + 1;
             try {
-                const userDocRef = doc(db, "users", signInUid);
+                const userDocRef = doc(db, "workers", signInUid);
                 await updateDoc(userDocRef, {
-                    workers: {
-                        [name]: {
-                            name,
-                            birthDate,
-                            workStartDate,
-                            phoneNumber,
-                            id,
-                        },
+                    [name]: {
+                        name,
+                        birthDate,
+                        workStartDate,
+                        phoneNumber,
+                        id,
                     },
                 });
                 console.log("등록 완료");
@@ -106,7 +103,7 @@ const EmployeePage = () => {
 
     useEffect(() => {
         if (Object.keys(userInfo).length !== 0) {
-            console.log(userInfo.workers, "userInfo");
+            console.log(userInfo, "userInfo");
         }
     }, [userInfo]);
 

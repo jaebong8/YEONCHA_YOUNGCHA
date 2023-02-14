@@ -34,7 +34,6 @@ const SignUp = () => {
                     userUid: uid,
                     role: "admin",
                     email: email,
-                    workers: {},
                 });
                 setUserName(user.user.email);
                 setEmail("");
